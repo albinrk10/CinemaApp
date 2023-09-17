@@ -1,5 +1,5 @@
 import 'package:cinemapedia_albin/presentation/providers/providers.dart';
-import 'package:cinemapedia_albin/presentation/providers/widgets/widgets.dart';
+import 'package:cinemapedia_albin/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,11 +36,17 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     //final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     // if (nowPlayingMovies.length == 0) return CircularProgressIndicator();
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
+    final nowPlayingMovies = ref.watch(moviesSlideshowProvider);
 
     return Column(
       children: [
         const CustomAppbar(),
-        MoviesSlideshow(movies: slideShowMovies ),
+        MoviesSlideshow(movies: slideShowMovies),
+        MovieZontalListView(
+          movies: nowPlayingMovies,
+          titile: 'En cines',
+          subTitle :'Lunes',
+        )
       ],
     );
   }
