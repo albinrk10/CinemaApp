@@ -42,6 +42,7 @@ class _MovieHorizontalListViewState extends State<MovieHorizontalListView> {
   @override
   void dispose() {
     // TODO: implement dispose
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -63,7 +64,7 @@ class _MovieHorizontalListViewState extends State<MovieHorizontalListView> {
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
-              return _Slide(movie: widget.movies[index]);
+              return FadeInRight(child: _Slide(movie: widget.movies[index]));
             },
           ))
         ],

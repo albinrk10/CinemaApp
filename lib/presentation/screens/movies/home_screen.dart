@@ -41,33 +41,33 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   Widget build(BuildContext context) {
     //final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     // if (nowPlayingMovies.length == 0) return CircularProgressIndicator();
-     final slideShowMovies = ref.watch(moviesSlideshowProvider);
+
+    final initialLoading = ref.watch(initialLoadingProvider);
+    if (initialLoading) return const FullScreenLoader();
+
+    final slideShowMovies = ref.watch(moviesSlideshowProvider);
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     //*Proximamente
     final upcomingMovies = ref.watch(upcomingMoviesProvider);
     //*Polular
     final popularMovies = ref.watch(popularMoviesProvider);
-   //*Mejor Calificada
+    //*Mejor Calificada
     final topratedMovies = ref.watch(topratedMoviesProvider);
-    
-   
 
     return CustomScrollView(
       slivers: [
-        const SliverAppBar(
-          floating: true,
-          flexibleSpace: FlexibleSpaceBar(
-            //centerTitle: true,
-            titlePadding: EdgeInsets.all(0),
-             title:  CustomAppbar(),
-          ),
-          
+      const SliverAppBar(
+        floating: true,
+        flexibleSpace: FlexibleSpaceBar(
+          //centerTitle: true,
+          titlePadding: EdgeInsets.all(0),
+          title: CustomAppbar(),
         ),
+      ),
       SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
         return Column(
           children: [
-            
             MoviesSlideshow(movies: slideShowMovies),
             MovieHorizontalListView(
                 movies: nowPlayingMovies,
