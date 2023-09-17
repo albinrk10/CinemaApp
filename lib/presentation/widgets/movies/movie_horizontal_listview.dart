@@ -1,15 +1,16 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia_albin/config/helpers/human_formats.dart';
 import 'package:flutter/material.dart';
 
 import '../../../domain/entities/movie.dart';
 
-class MovieZontalListView extends StatelessWidget {
+class MovieHorizontalListView extends StatelessWidget {
   final List<Movie> movies;
   final String? titile;
   final String? subTitle;
   final VoidCallback? loadNextPage;
 
-  const MovieZontalListView(
+  const MovieHorizontalListView(
       {super.key,
       required this.movies,
       this.loadNextPage,
@@ -83,26 +84,40 @@ class _Slide extends StatelessWidget {
             height: 5,
           ),
           //*Title
-           SizedBox(
+          SizedBox(
             width: 150,
             child: Text(
               movie.title,
               maxLines: 2,
-              style:textStyles.titleSmall ,
+              style: textStyles.titleSmall,
             ),
           ),
 
           //*Rating
-          Row(
-            children: [
-              Icon(Icons.star_half_outlined,color:Colors.yellow.shade800),
-              const SizedBox(width: 3,),
-              Text('${movie.voteAverage}',style: textStyles.bodyMedium?.copyWith(color: Colors.yellow.shade800) ,),
-              const SizedBox(width: 10,),
-              Text('${movie.popularity}',style: textStyles.bodySmall,)
-            ],
+          SizedBox(
+            width: 150,
+            child: Row(
+              children: [
+                Icon(Icons.star_half_outlined, color: Colors.yellow.shade800),
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  '${movie.voteAverage}',
+                  style: textStyles.bodyMedium
+                      ?.copyWith(color: Colors.yellow.shade800),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Spacer(),
+                Text(
+                  HumanFormats.number(movie.popularity),
+                  style: textStyles.bodySmall,
+                ),
+              ],
+            ),
           )
-
         ],
       ),
     );
