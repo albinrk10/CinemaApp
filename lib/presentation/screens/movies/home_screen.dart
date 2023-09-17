@@ -45,7 +45,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
         MovieZontalListView(
           movies: nowPlayingMovies,
           titile: 'En cines',
-          subTitle :'Lunes',
+          subTitle :'Lunes 20',
         )
       ],
     );
