@@ -37,17 +37,16 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     // if (nowPlayingMovies.length == 0) return CircularProgressIndicator();
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
-    
 
     return Column(
       children: [
         const CustomAppbar(),
         MoviesSlideshow(movies: slideShowMovies),
-
         MovieHorizontalListView(
           movies: nowPlayingMovies,
           titile: 'En cines',
-          subTitle :'Lunes 20',
+          subTitle: 'Lunes 20',
+          loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
         )
       ],
     );

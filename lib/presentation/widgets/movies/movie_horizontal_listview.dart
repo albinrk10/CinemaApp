@@ -1,10 +1,11 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia_albin/config/helpers/human_formats.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../domain/entities/movie.dart';
 
-class MovieHorizontalListView extends StatelessWidget {
+class MovieHorizontalListView extends StatefulWidget {
   final List<Movie> movies;
   final String? titile;
   final String? subTitle;
@@ -18,23 +19,51 @@ class MovieHorizontalListView extends StatelessWidget {
       this.subTitle});
 
   @override
+  State<MovieHorizontalListView> createState() =>
+      _MovieHorizontalListViewState();
+}
+
+class _MovieHorizontalListViewState extends State<MovieHorizontalListView> {
+  final scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if (widget.loadNextPage == null) return;
+
+      if ((scrollController.position.pixels + 200) >=
+          scrollController.position.maxScrollExtent) {
+        widget.loadNextPage!();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 350,
       child: Column(
         children: [
-          if (titile != null || subTitle != null)
+          if (widget.titile != null || widget.subTitle != null)
             _Title(
-              title: titile,
-              subTitle: subTitle,
+              title: widget.titile,
+              subTitle: widget.subTitle,
             ),
           Expanded(
               child: ListView.builder(
-            itemCount: movies.length,
+            controller: scrollController,
+            itemCount: widget.movies.length,
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
-              return _Slide(movie: movies[index]);
+              return _Slide(movie: widget.movies[index]);
             },
           ))
         ],
