@@ -9,4 +9,6 @@ abstract class MoviesRepository {
    //*Mejor Calificada
    Future<List<Movie>>getTopRated({int page = 1});
 
+   Future<Movie> getMovieById(String id);
+
 }
