@@ -3,7 +3,7 @@ import 'package:cinemapedia_albin/domain/entities/actor.dart';
 import '../models/moviedb/credits_response.dart';
 
 class ActorMapper {
-  static Actor castYoEntity(Cast cast) => Actor(
+  static Actor castToEntity(Cast cast) => Actor(
       id: cast.id,
       name: cast.name,
       profilePath: cast.profilePath != null
