@@ -10,48 +10,88 @@ typedef SearchMoviesCallback = Future<List<Movie>> Function(String query);
 
 class SearchMovieDelegate extends SearchDelegate<Movie?> {
   final SearchMoviesCallback searchMovies;
+  List<Movie> initialMovies;
   StreamController<List<Movie>> debouncedMovies = StreamController.broadcast();
+  StreamController<bool> insLoadigStream = StreamController.broadcast();
 
   Timer? _debounceTimer;
 
-  SearchMovieDelegate({required this.searchMovies});
+  SearchMovieDelegate({
+    required this.searchMovies,
+    required this.initialMovies,
+  }) : super(searchFieldLabel: 'Buscar peliculas');
 
   void clearStreams() {
     debouncedMovies.close();
   }
 
   void _onQueryChanged(String query) {
+    insLoadigStream.add(true);
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
-      if (query.isEmpty) {
-        debouncedMovies.add([]);
-        return;
-      }
+      // if (query.isEmpty) {
+      //   debouncedMovies.add([]);
+      //   return;
+      //}
 
       final movies = await searchMovies(query);
+      initialMovies = movies;
       debouncedMovies.add(movies);
+      insLoadigStream.add(false);
     });
   }
 
-  @override
-  String get searchFieldLabel => 'Buscar peliculas';
+  Widget buildResultsAndSuggestions() {
+    return StreamBuilder(
+        initialData: initialMovies,
+        stream: debouncedMovies.stream,
+        builder: (context, snapshot) {
+          final movies = snapshot.data ?? [];
+          return ListView.builder(
+              itemCount: movies.length,
+              itemBuilder: (context, index) => _MovieItem(
+                    movie: movies[index],
+                    onMovieSelected: (context, movie) {
+                      clearStreams();
+                      close(context, movie);
+                    },
+                  ));
+        });
+  }
+
+  // @override
+  // String get searchFieldLabel => 'Buscar peliculas';
 
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
-      // if(query.isNotEmpty)
-      FadeIn(
-        animate: query.isNotEmpty,
-        child: IconButton(
-            onPressed: () => query = '', icon: const Icon(Icons.clear)),
-      ),
+      StreamBuilder(
+          initialData: false,
+          stream: insLoadigStream.stream,
+          builder: (context, snapshot) {
+            if (snapshot.data ?? false) {
+              return SpinPerfect(
+                duration: const Duration(seconds: 20),
+                spins: 10,
+                infinite: true,
+                child: IconButton(
+                    onPressed: () => query = '',
+                    icon: const Icon(Icons.refresh_rounded)),
+              );
+            }
+            return FadeIn(
+              animate: query.isNotEmpty,
+              child: IconButton(
+                  onPressed: () => query = '', icon: const Icon(Icons.clear)),
+            );
+          })
     ];
   }
 
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
-        onPressed: ()  {
+        onPressed: () {
           clearStreams();
           close(context, null);
         },
@@ -60,31 +100,13 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Text('buildResults');
+    return buildResultsAndSuggestions();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     _onQueryChanged(query);
-    return StreamBuilder(
-
-        //future: searchMovies(query),
-        stream: debouncedMovies.stream,
-        builder: (context, snapshot) {
-          //!print('Realizando peticion');
-
-          final movies = snapshot.data ?? [];
-
-          return ListView.builder(
-              itemCount: movies.length,
-              itemBuilder: (context, index) => _MovieItem(
-                    movie: movies[index],
-                    onMovieSelected:(context,movie) {
-                      clearStreams();
-                      close(context, movie);
-                    }  ,
-                  ));
-        });
+    return buildResultsAndSuggestions();
   }
 }
 
