@@ -12,7 +12,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
   final SearchMoviesCallback searchMovies;
   List<Movie> initialMovies;
   StreamController<List<Movie>> debouncedMovies = StreamController.broadcast();
-  StreamController<bool> insLoadigStream = StreamController.broadcast();
+  StreamController<bool> insLoadingStream = StreamController.broadcast();
 
   Timer? _debounceTimer;
 
@@ -26,7 +26,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
   }
 
   void _onQueryChanged(String query) {
-    insLoadigStream.add(true);
+    insLoadingStream.add(true);
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       // if (query.isEmpty) {
@@ -37,7 +37,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
       final movies = await searchMovies(query);
       initialMovies = movies;
       debouncedMovies.add(movies);
-      insLoadigStream.add(false);
+      insLoadingStream.add(false);
     });
   }
 
@@ -67,7 +67,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?> {
     return [
       StreamBuilder(
           initialData: false,
-          stream: insLoadigStream.stream,
+          stream: insLoadingStream.stream,
           builder: (context, snapshot) {
             if (snapshot.data ?? false) {
               return SpinPerfect(
