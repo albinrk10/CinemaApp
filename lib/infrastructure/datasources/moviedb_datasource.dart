@@ -1,13 +1,12 @@
 import 'package:cinemapedia_albin/config/constants/environment.dart';
 import 'package:cinemapedia_albin/domain/entities/movie.dart';
-import 'package:cinemapedia_albin/infrastructure/models/moviedb/movie_details.dart';
-import 'package:cinemapedia_albin/infrastructure/models/moviedb/moviedb_response.dart';
+import 'package:cinemapedia_albin/domain/entities/video.dart';
 import 'package:dio/dio.dart';
-
 import '../../domain/datasources/movies_datasource.dart';
-import '../mappers/movie_mapper.dart';
+import '../mappers/mappers.dart';
+import '../models/models.dart';
 
-class MoviedbDatasource extends MovieDatasource {
+class MoviedbDatasource extends MoviesDatasource {
   final dio = Dio(BaseOptions(
       baseUrl: 'https://api.themoviedb.org/3',
       queryParameters: {
@@ -77,5 +76,27 @@ class MoviedbDatasource extends MovieDatasource {
         await dio.get('/search/movie', queryParameters: {'query': query});
 
     return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getSimilarMovies(int movieId)async {
+   final response = await dio.get('/movie/$movieId/similar');
+    return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Video>> getYoutubeVideosById(int movieId)async {
+   final response = await dio.get('/movie/$movieId/videos');
+    final moviedbVideosReponse = MoviedbVideosResponse.fromJson(response.data);
+    final videos = <Video>[];
+
+    for (final moviedbVideo in moviedbVideosReponse.results) {
+      if ( moviedbVideo.site == 'YouTube' ) {
+        final video = VideoMapper.moviedbVideoToEntity(moviedbVideo);
+        videos.add(video);
+      }
+    }
+
+    return videos;
   }
 }
