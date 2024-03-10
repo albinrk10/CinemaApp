@@ -5,7 +5,7 @@ part 'movie.g.dart';
 class Movie {
   Id? isarId; // you can also use id = null to auto increment
 
-  final bool adult;
+ final bool adult;
   final String backdropPath;
   final List<String> genreIds;
   final int id;

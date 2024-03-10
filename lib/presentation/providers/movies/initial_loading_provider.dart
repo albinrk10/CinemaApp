@@ -8,7 +8,7 @@ final initialLoadingProvider = Provider<bool>((ref) {
   //*Polular
   final step3 = ref.watch(popularMoviesProvider).isEmpty;
   //*Mejor Calificada
-  final step4 = ref.watch(topratedMoviesProvider).isEmpty;
+  final step4 = ref.watch(topRatedMoviesProvider).isEmpty;
   if (step1 ||step2 || step3 || step4 ) return true;
   return false; //terminamos de cargar
 });
