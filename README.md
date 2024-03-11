@@ -1,6 +1,5 @@
 # cinemapedia_albin
 
-#Dev
 
 # Dev
 
@@ -10,6 +9,21 @@
 
 ```
 flutter pub run build_runner build
+```
+# Prod
+Para cambiar el nombre de la aplicacion:
+```
+flutter pub run change_app_package_name:main com.albinhinostroza.cinemapedia
+```
+
+Para cambiar el icono de la aplicacion
+```
+flutter pub run flutter_launcher_icons
+```
+
+Para cambiar el splash scrren
+```
+dart run flutter_native_splash:create
 ```
 
 # CinemaApp
